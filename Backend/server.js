@@ -1,9 +1,26 @@
+const path = require('node:path');
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require('./models/user');
 
+const Session = require('./models/session');
+
 const app = express();
 app.use(express.json());
+app.use('/api/auth', require('./routes/auth'));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../Frontend/index.html')));
+app.get('/auth.js', (req, res) => res.sendFile(path.join(__dirname, '../Frontend/auth.js')));
+app.use((error, req, res, next) => {
+    if (res.headersSent) return next(error);
+    if (error.type === 'entity.parse.failed') {
+        return res.status(400).json({ error: 'Invalid JSON.' });
+    }
+    if (error.type === 'entity.too.large') {
+        return res.status(413).json({ error: 'Request is too large.' });
+    }
+    console.error('Request failed:', error.name);
+    return res.status(500).json({ error: 'Request failed.' });
+});
 
 app.get('/api/health', async (req, res) => {
     try {
@@ -30,7 +47,7 @@ async function start() {
             dbName: 'cs409_final',
             serverSelectionTimeoutMS: 5000
         });
-        await User.init();
+        await Promise.all([User.init(), Session.init()]);
 
         const port = Number(process.env.PORT || 3000);
         const server = app.listen(port, () => {
