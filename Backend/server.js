@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const User = require('./models/user');
 
 const Session = require('./models/session');
+const authDatabaseName = 'cs409_final';
 
 const app = express();
 app.use(express.json());
@@ -44,14 +45,14 @@ async function start() {
 
     try {
         await mongoose.connect(uri, {
-            dbName: 'cs409_final',
+            dbName: authDatabaseName,
             serverSelectionTimeoutMS: 5000
         });
         await Promise.all([User.init(), Session.init()]);
 
         const port = Number(process.env.PORT || 3000);
         const server = app.listen(port, () => {
-            console.log(`API listening on port ${server.address().port} (database: cs409_final)`);
+            console.log(`API listening on port ${server.address().port} (database: ${authDatabaseName})`);
         });
         server.on('error', async (error) => {
             console.error('HTTP server failed:', error.code);

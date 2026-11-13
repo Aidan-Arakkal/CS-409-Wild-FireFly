@@ -42,8 +42,8 @@ router.post('/register', async (req, res) => {
     if (typeof name !== 'string' || !name.trim() || name.trim().length > 100 ||
         typeof email !== 'string' || email.trim().length > 254 ||
         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
-        typeof password !== 'string' || password.length < 15 || password.length > 128) {
-        return res.status(400).json({ error: 'Enter a name, a valid email, and a password of 15–128 characters.' });
+        typeof password !== 'string' || password.length < 8 || password.length > 128) {
+        return res.status(400).json({ error: 'Enter a name, a valid email, and a password of 8–128 characters.' });
     }
 
     const salt = randomBytes(16).toString('hex');
