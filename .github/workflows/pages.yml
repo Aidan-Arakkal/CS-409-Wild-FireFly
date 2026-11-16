@@ -25,6 +25,24 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: actions/configure-pages@v5
+      - name: Configure the public auth API origin
+        env:
+          AUTH_API_URL: ${{ vars.AUTH_API_URL }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const origin = process.env.AUTH_API_URL;
+          if (!origin) process.exit(0);
+          if (!/^https:\/\/[a-z0-9-]+\.onrender\.com\/?$/.test(origin)) {
+            throw new Error('AUTH_API_URL must be the Render HTTPS origin.');
+          }
+          const file = 'Frontend/index.html';
+          const html = fs.readFileSync(file, 'utf8');
+          fs.writeFileSync(file, html.replace(
+            '<meta name="auth-api-origin" content="">',
+            '<meta name="auth-api-origin" content="' + new URL(origin).origin + '">'
+          ));
+          NODE
       - uses: actions/upload-pages-artifact@v4
         with:
           path: Frontend

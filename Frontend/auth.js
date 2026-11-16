@@ -2,6 +2,7 @@ const statusMessage = document.getElementById('status');
 const guest = document.getElementById('guest');
 const logout = document.getElementById('logout');
 const login = document.getElementById('login');
+const apiOrigin = document.querySelector('meta[name=auth-api-origin]').content;
 
 function showUser(user) {
     guest.hidden = Boolean(user);
@@ -15,7 +16,16 @@ async function authRequest(action, fields) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(fields)
     };
-    const response = await fetch('/api/auth/' + action, options);
+    if (!apiOrigin && location.hostname.endsWith('.github.io')) {
+        throw new Error('The sign-in server has not been configured yet.');
+    }
+    const response = await fetch(apiOrigin + '/api/auth/' + action, {
+        ...options,
+        credentials: 'include'
+    });
+    if (!response.headers.get('content-type')?.includes('application/json')) {
+        throw new Error('The sign-in server is unavailable. Try again shortly.');
+    }
     if (action === 'me' && response.status === 401) return { user: null };
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Request failed.');
