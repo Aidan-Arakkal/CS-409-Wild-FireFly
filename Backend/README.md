@@ -9,4 +9,13 @@ This backend handles authentication. Its MongoDB connection and health endpoint 
 
 Create a test account with a password of at least 8 characters. Sign in with the same credentials, refresh to confirm the session persists, and sign out. In Atlas Data Explorer, verify that `cs409_final.users` contains the new account with a password hash. The backend stores expiring sessions in `cs409_final.sessions`.
 
-Keep `.env` out of Git and frontend code. This is a development demo. Before exposing it publicly, add rate limits to registration and login and use HTTPS with `NODE_ENV=production`.
+Keep `.env` out of Git and frontend code. This is a development demo. For hosted deployments, use HTTPS with `NODE_ENV=production`.
+
+## GitHub Pages and Render
+
+Deploy the root render.yaml as a Render Blueprint. Enter the Atlas URI in Render
+as MONGODB_URI and allow the Render service's outbound addresses in Atlas.
+
+Set AUTH_API_URL in GitHub Actions repository variables to the Render HTTPS
+origin and run the Pages workflow. Verify signup, sign-in, refresh, and sign-out
+in a browser that supports partitioned cookies.

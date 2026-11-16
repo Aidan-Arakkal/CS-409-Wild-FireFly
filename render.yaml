@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: cs409-wild-firefly-auth
+    runtime: node
+    plan: free
+    region: ohio
+    buildCommand: npm ci --prefix Backend --omit=dev
+    startCommand: npm start --prefix Backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.22.1
+      - key: NODE_ENV
+        value: production
+      - key: AUTH_FRONTEND_ORIGIN
+        value: https://aidan-arakkal.github.io
+      - key: MONGODB_URI
+        sync: false
