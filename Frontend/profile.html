@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>My Journal</title>
+
+    <link rel="stylesheet" href="./profile.css">
+    <script src="./profile.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <div class="header-left">
+            <strong>WildFireFly</strong>
+            <button type="button" class="account-button">Account</button>
+        </div>
+
+        <nav aria-label="Main navigation">
+            <button type="button" id="journal-button" aria-current="page">
+                My Journal
+            </button>
+            <button type="button">Explore Species</button>
+            <button type="button">Add Sighting</button>
+        </nav>
+    </header>
+
+    <main id="journal">
+        <!-- Heading -->
+        <div class="top">
+            <h1 id="journal-title" tabindex="-1">My Memories</h1>
+            <button type="button" class="primary">+ Add Sighting</button>
+        </div>
+
+        <!-- Search bar and dropdown menu -->
+        <div class="toolbar">
+            <label for="search">
+                Search your memories
+                <input
+                    id="search"
+                    type="search"
+                    placeholder="Species, location, or notes"
+                >
+            </label>
+
+            <label for="group">
+                View sightings
+                <select id="group">
+                    <option value="all">All Sightings</option>
+                    <option value="newest">Newest</option>
+                    <option value="location">Location</option>
+                    <option value="species">Species</option>
+                </select>
+            </label>
+        </div>
+
+        <!-- Summary of the complete journal -->
+        <dl class="stats" aria-label="Journal totals">
+            <div>
+                <dt>Total Sightings</dt>
+                <dd id="total-sightings">6</dd>
+            </div>
+
+            <div>
+                <dt title="Unique identified species; unknown sightings are excluded">
+                    Species Recorded
+                </dt>
+                <dd id="total-species">3</dd>
+            </div>
+
+            <div>
+                <dt>Locations</dt>
+                <dd id="total-locations">3</dd>
+            </div>
+        </dl>
+
+        <!-- All six mock cards are written here, not created by JavaScript. -->
+        <section id="cards" aria-labelledby="results-heading">
+            <h2 id="results-heading">All Sightings</h2>
+            <p id="results-count" role="status">6 sightings shown</p>
+            <div id="memory-grid" class="grid">
+                <h3 class="group-heading" data-group-type="location" data-group-value="Busey Woods" hidden>Busey Woods</h3>
+                <h3 class="group-heading" data-group-type="location" data-group-value="Meadowbrook Park" hidden>Meadowbrook Park</h3>
+                <h3 class="group-heading" data-group-type="location" data-group-value="Crystal Lake Park" hidden>Crystal Lake Park</h3>
+                <h3 class="group-heading" data-group-type="species" data-group-value="American robin" hidden>American robin</h3>
+                <h3 class="group-heading" data-group-type="species" data-group-value="Unknown species" hidden>Unknown species</h3>
+                <h3 class="group-heading" data-group-type="species" data-group-value="Monarch butterfly" hidden>Monarch butterfly</h3>
+                <h3 class="group-heading" data-group-type="species" data-group-value="Eastern gray squirrel" hidden>Eastern gray squirrel</h3>
+
+                <article class="card" id="memory-1">
+                    <button type="button" class="memory-button" aria-label="Open American robin sighting at Busey Woods">
+                        <span class="art" aria-hidden="true">🐦</span>
+                        <span class="body">
+                            <span class="tag">Busey Woods</span>
+                            <span class="card-title">American robin</span>
+                            <small>2026-11-09</small>
+                            <span class="card-notes" hidden>A flash of orange beside the trail on my morning walk.</span>
+                            <strong>View Memory →</strong>
+                        </span>
+                    </button>
+                </article>
+
+                <article class="card" id="memory-2">
+                    <button type="button" class="memory-button" aria-label="Open Unknown species sighting at Busey Woods">
+                        <span class="art" aria-hidden="true">🍄</span>
+                        <span class="body">
+                            <span class="tag">Busey Woods</span>
+                            <span class="card-title">Unknown species</span>
+                            <small>2026-11-06</small>
+                            <span class="card-notes" hidden>Small mushrooms growing on a fallen branch after the rain.</span>
+                            <strong>View Memory →</strong>
+                        </span>
+                    </button>
+                </article>
+
+                <article class="card" id="memory-3">
+                    <button type="button" class="memory-button" aria-label="Open Monarch butterfly sighting at Meadowbrook Park">
+                        <span class="art" aria-hidden="true">🦋</span>
+                        <span class="body">
+                            <span class="tag">Meadowbrook Park</span>
+                            <span class="card-title">Monarch butterfly</span>
+                            <small>2026-10-18</small>
+                            <span class="card-notes" hidden>Resting on a flower near the garden path.</span>
+                            <strong>View Memory →</strong>
+                        </span>
+                    </button>
+                </article>
+
+                <article class="card" id="memory-4">
+                    <button type="button" class="memory-button" aria-label="Open American robin sighting at Crystal Lake Park">
+                        <span class="art" aria-hidden="true">🐦</span>
+                        <span class="body">
+                            <span class="tag">Crystal Lake Park</span>
+                            <span class="card-title">American robin</span>
+                            <small>2026-10-12</small>
+                            <span class="card-notes" hidden>Watching a bird hop across the grass near the water.</span>
+                            <strong>View Memory →</strong>
+                        </span>
+                    </button>
+                </article>
+
+                <article class="card" id="memory-5">
+                    <button type="button" class="memory-button" aria-label="Open Eastern gray squirrel sighting at Crystal Lake Park">
+                        <span class="art" aria-hidden="true">🐿️</span>
+                        <span class="body">
+                            <span class="tag">Crystal Lake Park</span>
+                            <span class="card-title">Eastern gray squirrel</span>
+                            <small>2026-10-04</small>
+                            <span class="card-notes" hidden>Gathering acorns under the oak trees.</span>
+                            <strong>View Memory →</strong>
+                        </span>
+                    </button>
+                </article>
+
+                <article class="card" id="memory-6">
+                    <button type="button" class="memory-button" aria-label="Open Unknown species sighting at Meadowbrook Park">
+                        <span class="art" aria-hidden="true">🌼</span>
+                        <span class="body">
+                            <span class="tag">Meadowbrook Park</span>
+                            <span class="card-title">Unknown species</span>
+                            <small>2026-09-25</small>
+                            <span class="card-notes" hidden>A flowering plant I want to identify on my next visit.</span>
+                            <strong>View Memory →</strong>
+                        </span>
+                    </button>
+                </article>
+            </div>
+            <div id="empty-state" class="panel" hidden>
+                <h2>No matching memories</h2>
+                <p>Try a different species or location, or clear your search.</p>
+                <button type="button" id="clear-search">Clear search</button>
+            </div>
+        </section>
+
+        <!-- Map of the sighting locations -->
+        <section class="panel map-panel" aria-labelledby="map-title">
+            <h2 id="map-title">Sightings location</h2>
+
+            <div class="location-filter">
+                <label for="map-place">Choose a Location</label>
+                <select id="map-place">
+                    <option value="Busey Woods" data-latitude="40.122" data-longitude="-88.211">Busey Woods</option>
+                    <option value="Meadowbrook Park" data-latitude="40.081" data-longitude="-88.207">Meadowbrook Park</option>
+                    <option value="Crystal Lake Park" data-latitude="40.120" data-longitude="-88.205">Crystal Lake Park</option>
+                </select>
+            </div>
+
+            <div class="map-wrap">
+                <iframe
+                    id="sighting-map"
+                    allowfullscreen
+                    title="Selected sighting location"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                ></iframe>
+            </div>
+
+            <p class="map-summary" id="map-summary"></p>
+            <div class="map-points" id="map-points">
+                <div class="map-point" data-location="Busey Woods">
+                    <strong>American robin</strong>
+                    <span>2026-11-09 · Busey Woods</span>
+                </div>
+                <div class="map-point" data-location="Busey Woods">
+                    <strong>Unknown species</strong>
+                    <span>2026-11-06 · Busey Woods</span>
+                </div>
+                <div class="map-point" data-location="Meadowbrook Park">
+                    <strong>Monarch butterfly</strong>
+                    <span>2026-10-18 · Meadowbrook Park</span>
+                </div>
+                <div class="map-point" data-location="Crystal Lake Park">
+                    <strong>American robin</strong>
+                    <span>2026-10-12 · Crystal Lake Park</span>
+                </div>
+                <div class="map-point" data-location="Crystal Lake Park">
+                    <strong>Eastern gray squirrel</strong>
+                    <span>2026-10-04 · Crystal Lake Park</span>
+                </div>
+                <div class="map-point" data-location="Meadowbrook Park">
+                    <strong>Unknown species</strong>
+                    <span>2026-09-25 · Meadowbrook Park</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript fills these existing elements with the selected card details. -->
+    <dialog id="detail" aria-labelledby="detailtitle">
+        <div id="detailbody">
+            <div id="detail-art" class="art" aria-hidden="true"></div>
+            <h2 id="detailtitle"></h2>
+            <p id="detail-meta"></p>
+            <p id="detail-notes"></p>
+            <button type="button" id="show-on-map">Show location on map</button>
+        </div>
+        <div class="actions">
+            <button type="button" id="close-detail">Close sighting</button>
+        </div>
+    </dialog>
+</body>
+</html>
