@@ -535,3 +535,21 @@ body * {
     font-size: 25px;
     font-weight: 600;
 }
+
+.card .art img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#detail-art {
+    height: 260px;
+}
+
+#detail-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}

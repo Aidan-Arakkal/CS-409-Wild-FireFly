@@ -45,7 +45,9 @@ bindForm('register', (user) => {
     login.elements.email.value = user.email;
     login.elements.password.focus();
 });
-bindForm('login', showUser);
+bindForm('login', (user) => {
+    window.location.assign('./profile.html');
+});
 
 logout.addEventListener('click', async () => {
     logout.disabled = true;

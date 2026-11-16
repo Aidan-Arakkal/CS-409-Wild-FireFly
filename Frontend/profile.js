@@ -99,10 +99,23 @@ function clearSearch() {
 
 function openMemory(card) {
     selectedCard = card;
-    document.getElementById('detail-art').textContent = card.querySelector('.art').textContent;
-    document.getElementById('detailtitle').textContent = getCardValue(card, 'species');
-    document.getElementById('detail-meta').textContent = getCardValue(card, 'location') + ' · ' + getCardValue(card, 'date');
-    document.getElementById('detail-notes').textContent = getCardValue(card, 'notes');
+
+    const cardImage = card.querySelector('.art img');
+    const detailImage = document.getElementById('detail-image');
+
+    detailImage.src = cardImage.getAttribute('src');
+    detailImage.alt = cardImage.alt;
+
+    document.getElementById('detailtitle').textContent =
+        getCardValue(card, 'species');
+
+    document.getElementById('detail-meta').textContent =
+        getCardValue(card, 'location') + ' · ' +
+        getCardValue(card, 'date');
+
+    document.getElementById('detail-notes').textContent =
+        getCardValue(card, 'notes');
+
     detailDialog.showModal();
 }
 
