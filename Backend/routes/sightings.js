@@ -37,24 +37,33 @@ module.exports = function (router) {
         if (!imageUrl || !imageUrl.includes("res.cloudinary.com")) return;
 
         try {
-            // Match everything after '/upload/' (skipping optional 'v12345/' version) up to the file extension
             const match = imageUrl.match(/\/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z0-9]+$/);
             if (match && match[1]) {
-                const publicId = decodeURIComponent(match[1]); // e.g., "sightings/abc123xyz"
+                const publicId = decodeURIComponent(match[1]);
                 await cloudinary.uploader.destroy(publicId);
             }
         } catch (err) {
-            // Log the error without crashing the API response if the image was already missing
             console.error("Failed to delete image from Cloudinary:", err);
         }
     };
 
-    // Helper to build a Sighting payload from either JSON or FormData (multipart)
-    const buildSightingData = (body, existingImageUrl = "") => {
+    // Helper: Normalize sightingUser (treats null, undefined, or whitespace as "")
+    const normalizeUserId = (val) => {
+        if (val === null || val === undefined) return "";
+        return String(val).trim();
+    };
+
+    // Helper: Build a Sighting payload from either JSON or FormData (multipart)
+    const buildSightingData = (body, existingImageUrl = "", existingUserId = "") => {
+        // On PUT, preserve existingUserId if sightingUser is omitted; clear it if sent as "" or null
+        const resolvedUser = body.sightingUser !== undefined
+            ? normalizeUserId(body.sightingUser)
+            : normalizeUserId(existingUserId);
+
         const data = {
             species: body.species,
             description: body.description !== undefined ? body.description : "",
-            sightingUser: body.sightingUser !== undefined ? body.sightingUser : "",
+            sightingUser: resolvedUser,
             image: existingImageUrl
         };
 
@@ -84,7 +93,7 @@ module.exports = function (router) {
     const sightingsRoute = router.route("/sightings");
     const sightingsIdRoute = router.route("/sightings/:id");
 
-    // GET all sightings (supports ?where, ?sort, ?select, ?skip, ?limit, ?count)
+    // GET all sightings
     sightingsRoute.get(async function (req, res) {
         const query = Sighting.find();
 
@@ -116,17 +125,19 @@ module.exports = function (router) {
 
     // POST a new sighting and link it to User.sightings
     sightingsRoute.post(upload.single('image'), async function (req, res) {
-        if (req.body.sightingUser && req.body.sightingUser !== "") {
-            if (!mongoose.isValidObjectId(req.body.sightingUser)) {
+        const incomingUserId = normalizeUserId(req.body.sightingUser);
+
+        if (incomingUserId !== "") {
+            if (!mongoose.isValidObjectId(incomingUserId)) {
                 return res.status(400).json({ message: "Invalid user id for sightingUser", data: {} });
             }
-            const userExists = await User.findById(req.body.sightingUser).exec();
+            const userExists = await User.findById(incomingUserId).exec();
             if (!userExists) {
                 return res.status(404).json({ message: "Referenced sightingUser does not exist", data: {} });
             }
         }
 
-        const sightingData = buildSightingData(req.body, req.body.image || "");
+        const sightingData = buildSightingData(req.body, req.body.image || "", "");
         const newSighting = new Sighting(sightingData);
 
         try {
@@ -148,9 +159,10 @@ module.exports = function (router) {
         for (let i = 0; i < maxAttempts; i++) {
             try {
                 const savedSighting = await newSighting.save();
+                const savedUserId = normalizeUserId(savedSighting.sightingUser);
 
-                if (savedSighting.sightingUser !== "") {
-                    await User.findByIdAndUpdate(savedSighting.sightingUser, {
+                if (savedUserId !== "" && mongoose.isValidObjectId(savedUserId)) {
+                    await User.findByIdAndUpdate(savedUserId, {
                         $addToSet: { sightings: savedSighting._id.toString() }
                     }).exec();
                 }
@@ -163,7 +175,6 @@ module.exports = function (router) {
                 } else if (err.code === 11000) {
                     return res.status(400).json({ message: "Duplicate sighting entry", data: {} });
                 } else {
-                    // Clean up the newly uploaded image if MongoDB failed to save the sighting
                     if (req.file && newSighting.image) {
                         await deleteFromCloudinary(newSighting.image);
                     }
@@ -197,17 +208,19 @@ module.exports = function (router) {
         }
     });
 
-    // PUT (update) an existing sighting, sync User.sightings, and delete old Cloudinary image if replaced
+    // PUT (update) an existing sighting and sync User.sightings
     sightingsIdRoute.put(upload.single('image'), async function (req, res) {
         if (!mongoose.isValidObjectId(req.params.id)) {
             return res.status(404).json({ message: "Invalid Sighting Id", data: {} });
         }
 
-        if (req.body.sightingUser && req.body.sightingUser !== "") {
-            if (!mongoose.isValidObjectId(req.body.sightingUser)) {
+        const incomingUserId = normalizeUserId(req.body.sightingUser);
+
+        if (incomingUserId !== "") {
+            if (!mongoose.isValidObjectId(incomingUserId)) {
                 return res.status(400).json({ message: "Invalid user id for sightingUser", data: {} });
             }
-            const userExists = await User.findById(req.body.sightingUser).exec();
+            const userExists = await User.findById(incomingUserId).exec();
             if (!userExists) {
                 return res.status(404).json({ message: "Referenced sightingUser does not exist", data: {} });
             }
@@ -220,7 +233,7 @@ module.exports = function (router) {
             }
 
             const fallbackImage = req.body.image !== undefined ? req.body.image : oldSighting.image;
-            const updateData = buildSightingData(req.body, fallbackImage);
+            const updateData = buildSightingData(req.body, fallbackImage, oldSighting.sightingUser);
 
             const tempSighting = new Sighting(updateData);
             try {
@@ -249,19 +262,23 @@ module.exports = function (router) {
                 await deleteFromCloudinary(oldSighting.image);
             }
 
-            // Sync two-way reference if sightingUser changed
+            // Sync two-way reference on User.sightings
             const sightingIdStr = updatedSighting._id.toString();
-            if (oldSighting.sightingUser !== updatedSighting.sightingUser) {
-                if (oldSighting.sightingUser !== "") {
-                    await User.findByIdAndUpdate(oldSighting.sightingUser, {
-                        $pull: { sightings: sightingIdStr }
-                    }).exec();
-                }
-                if (updatedSighting.sightingUser !== "") {
-                    await User.findByIdAndUpdate(updatedSighting.sightingUser, {
-                        $addToSet: { sightings: sightingIdStr }
-                    }).exec();
-                }
+            const oldUserId = normalizeUserId(oldSighting.sightingUser);
+            const newUserId = normalizeUserId(updatedSighting.sightingUser);
+
+            // 1. If sightingUser was changed or removed, pull from the previous user
+            if (oldUserId !== "" && oldUserId !== newUserId && mongoose.isValidObjectId(oldUserId)) {
+                await User.findByIdAndUpdate(oldUserId, {
+                    $pull: { sightings: sightingIdStr }
+                }).exec();
+            }
+
+            // 2. Ensure sighting _id is present in the current sightingUser's sightings array
+            if (newUserId !== "" && mongoose.isValidObjectId(newUserId)) {
+                await User.findByIdAndUpdate(newUserId, {
+                    $addToSet: { sightings: sightingIdStr }
+                }).exec();
             }
 
             return res.status(200).json({ message: "Successfully updated sighting", data: updatedSighting });
@@ -285,14 +302,13 @@ module.exports = function (router) {
                 return res.status(404).json({ message: "Sighting not found", data: {} });
             }
 
-            // Remove sighting reference from the user
-            if (deletedSighting.sightingUser !== "") {
-                await User.findByIdAndUpdate(deletedSighting.sightingUser, {
+            const oldUserId = normalizeUserId(deletedSighting.sightingUser);
+            if (oldUserId !== "" && mongoose.isValidObjectId(oldUserId)) {
+                await User.findByIdAndUpdate(oldUserId, {
                     $pull: { sightings: deletedSighting._id.toString() }
                 }).exec();
             }
 
-            // Delete the image from Cloudinary
             if (deletedSighting.image) {
                 await deleteFromCloudinary(deletedSighting.image);
             }
