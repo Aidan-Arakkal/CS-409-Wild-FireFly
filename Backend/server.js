@@ -31,6 +31,9 @@ const app = express();
 
 // 5. Global middleware MUST be registered BEFORE routes
 app.use((req, res, next) => {
+    // Auth handles credentialed CORS, including its own preflight.
+    if (/^\/api\/auth(?:\/|$)/i.test(req.path)) return next();
+
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization");
     res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
