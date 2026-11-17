@@ -1,13 +1,14 @@
 const statusMessage = document.getElementById('status');
 const guest = document.getElementById('guest');
 const logout = document.getElementById('logout');
+const signedIn = document.getElementById('signed-in');
 const login = document.getElementById('login');
 const apiOrigin = document.querySelector('meta[name=auth-api-origin]').content;
 
 function showUser(user) {
     guest.hidden = Boolean(user);
-    logout.hidden = !user;
-    statusMessage.textContent = user ? `Signed in as ${user.name} (${user.email}).` : 'Signed out.';
+    signedIn.hidden = !user;
+    statusMessage.textContent = user ? `Signed in as ${user.name} (${user.email}).` : '';
 }
 
 async function authRequest(action, fields) {

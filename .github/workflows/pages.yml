@@ -36,12 +36,15 @@ jobs:
           if (!/^https:\/\/[a-z0-9-]+\.onrender\.com\/?$/.test(origin)) {
             throw new Error('AUTH_API_URL must be the Render HTTPS origin.');
           }
-          const file = 'Frontend/index.html';
-          const html = fs.readFileSync(file, 'utf8');
-          fs.writeFileSync(file, html.replace(
-            '<meta name="auth-api-origin" content="">',
-            '<meta name="auth-api-origin" content="' + new URL(origin).origin + '">'
-          ));
+          // Patch every page (index.html, profile.html, ...), not just index.html.
+          for (const name of fs.readdirSync('Frontend').filter(f => f.endsWith('.html'))) {
+            const file = 'Frontend/' + name;
+            const html = fs.readFileSync(file, 'utf8');
+            fs.writeFileSync(file, html.replace(
+              '<meta name="auth-api-origin" content="">',
+              '<meta name="auth-api-origin" content="' + new URL(origin).origin + '">'
+            ));
+          }
           NODE
       - uses: actions/upload-pages-artifact@v4
         with:
