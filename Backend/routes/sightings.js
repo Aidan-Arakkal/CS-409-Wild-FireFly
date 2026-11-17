@@ -139,8 +139,8 @@ module.exports = function (router) {
             try {
                 const uploadResult = await uploadToCloudinary(req.file.buffer);
                 newSighting.image = uploadResult.secure_url;
-            } catch (_) {
-                return res.status(500).json({ message: "Failed to upload image to Cloudinary", data: {} });
+            } catch (err) {
+                return res.status(500).json({ message: "Failed to upload image to Cloudinary", error: err.message, data: {} });
             }
         }
 
