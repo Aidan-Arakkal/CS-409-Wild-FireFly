@@ -49,8 +49,8 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api', require('./routes/sightings')(router));
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../Frontend/index.html')));
-app.get('/auth.js', (req, res) => res.sendFile(path.join(__dirname, '../Frontend/auth.js')));
+// Serve every Frontend file for local testing (GitHub Pages serves them in production).
+app.use(express.static(path.join(__dirname, '../Frontend')));
 
 app.get('/api/health', async (req, res) => {
     try {

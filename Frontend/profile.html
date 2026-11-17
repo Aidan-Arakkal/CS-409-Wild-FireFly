@@ -7,6 +7,8 @@
     <title>My Journal</title>
 
     <link rel="stylesheet" href="./profile.css">
+    <meta name="auth-api-origin" content="">
+    <script src="./api.js" defer></script>
     <script src="./profile.js" defer></script>
 </head>
 
@@ -22,7 +24,7 @@
                 My Journal
             </button>
             <button type="button">Explore Species</button>
-            <button type="button">Add Sighting</button>
+            <button type="button" class="open-add">Add Sighting</button>
         </nav>
     </header>
 
@@ -30,7 +32,7 @@
         <!-- Heading -->
         <div class="top">
             <h1 id="journal-title" tabindex="-1">My Memories</h1>
-            <button type="button" class="primary">+ Add Sighting</button>
+            <button type="button" class="primary open-add">+ Add Sighting</button>
         </div>
 
         <!-- Search Bar and Dropdown Menu -->
@@ -59,230 +61,28 @@
         <dl class="stats" aria-label="Journal totals">
             <div>
                 <dt>Total Sightings</dt>
-                <dd id="total-sightings">6</dd>
+                <dd id="total-sightings">0</dd>
             </div>
 
             <div>
                 <dt title="Unique identified species; unknown sightings are excluded">
                     Species Recorded
                 </dt>
-                <dd id="total-species">6</dd>
+                <dd id="total-species">0</dd>
             </div>
 
             <div>
                 <dt>Locations</dt>
-                <dd id="total-locations">3</dd>
+                <dd id="total-locations">0</dd>
             </div>
         </dl>
 
         <!-- Six Mock Data -->
         <section id="cards" aria-labelledby="results-heading">
             <h2 id="results-heading">All Sightings</h2>
-            <p id="results-count" role="status">6 sightings shown</p>
+            <p id="results-count" role="status">Loading…</p>
             <div id="memory-grid" class="grid">
-                <h3 class="group-heading" data-group-type="location" data-group-value="Masai Mara National Reserve, Kenya" hidden>
-                    Masai Mara National Reserve, Kenya
-                </h3>
-                
-                <h3 class="group-heading" data-group-type="location" data-group-value="Kruger National Park, South Africa" hidden>
-                    Kruger National Park, South Africa
-                </h3>
-                
-                <h3 class="group-heading" data-group-type="location" data-group-value="Serengeti National Park, Tanzania" hidden>
-                    Serengeti National Park, Tanzania
-                </h3>
-                
-                <h3 class="group-heading" data-group-type="species" data-group-value="Giraffe" hidden>
-                    Giraffe
-                </h3>
-                
-                <h3 class="group-heading" data-group-type="species" data-group-value="Cheetah" hidden>
-                    Cheetah
-                </h3>
-                
-                <h3 class="group-heading" data-group-type="species" data-group-value="Rhinoceros" hidden>
-                    Rhinoceros
-                </h3>
-                
-                <h3 class="group-heading" data-group-type="species" data-group-value="Zebra" hidden>
-                    Zebra
-                </h3>
-                
-                <h3 class="group-heading" data-group-type="species" data-group-value="Nile Crocodile" hidden>
-                    Nile Crocodile
-                </h3>
-                
-                <h3 class="group-heading" data-group-type="species" data-group-value="Gazelle" hidden>
-                    Gazelle
-                </h3>
-
-                <article class="card" id="memory-1">
-                    <button
-                        type="button"
-                        class="memory-button"
-                        aria-label="Open Giraffe sighting at Masai Mara National Reserve, Kenya"
-                    >
-                        <span class="art">
-                            <img
-                                src="./images/africa-safari-giraffes.jpg.webp"
-                                alt="Giraffe"
-                                loading="lazy"
-                            >
-                        </span>
-                
-                        <span class="body">
-                            <span class="tag">Masai Mara National Reserve, Kenya</span>
-                            <span class="card-title">Giraffe</span>
-                            <small>2026-11-09</small>
-                
-                            <span class="card-notes" hidden>
-                                Tall browsing mammal with a patterned coat, feeding on leaves high in trees.
-                            </span>
-                
-                            <strong>View Memory →</strong>
-                        </span>
-                    </button>
-                </article>
-
-                <article class="card" id="memory-2">
-                    <button
-                        type="button"
-                        class="memory-button"
-                        aria-label="Open Cheetah sighting at Masai Mara National Reserve, Kenya"
-                    >
-                        <span class="art">
-                            <img
-                                src="./images/african-safari-cheetah-trcuk.jpg.webp"
-                                alt="Cheetah"
-                                loading="lazy"
-                            >
-                        </span>
-                
-                        <span class="body">
-                            <span class="tag">Masai Mara National Reserve, Kenya</span>
-                            <span class="card-title">Cheetah</span>
-                            <small>2026-11-06</small>
-                
-                            <span class="card-notes" hidden>
-                                Slender, spotted predator adapted for fast chases across open grassland.
-                            </span>
-                
-                            <strong>View Memory →</strong>
-                        </span>
-                    </button>
-                </article>
-
-                <article class="card" id="memory-3">
-                    <button
-                        type="button"
-                        class="memory-button"
-                        aria-label="Open Rhinoceros sighting at Kruger National Park, South Africa"
-                    >
-                        <span class="art">
-                            <img
-                                src="./images/africa-safari-rhinos.jpg.webp"
-                                alt="Rhinoceros"
-                                loading="lazy"
-                            >
-                        </span>
-                
-                        <span class="body">
-                            <span class="tag">Kruger National Park, South Africa</span>
-                            <span class="card-title">Rhinoceros</span>
-                            <small>2026-10-18</small>
-                
-                            <span class="card-notes" hidden>
-                                Large horned herbivore with thick skin and strong senses of smell and hearing.
-                            </span>
-                
-                            <strong>View Memory →</strong>
-                        </span>
-                    </button>
-                </article>
-                
-                <article class="card" id="memory-4">
-                    <button
-                        type="button"
-                        class="memory-button"
-                        aria-label="Open Zebra sighting at Serengeti National Park, Tanzania"
-                    >
-                        <span class="art">
-                            <img
-                                src="./images/ngorongoro_conservation-zebras.jpg.webp"
-                                alt="Zebra"
-                                loading="lazy"
-                            >
-                        </span>
-                
-                        <span class="body">
-                            <span class="tag">Serengeti National Park, Tanzania</span>
-                            <span class="card-title">Zebra</span>
-                            <small>2026-10-12</small>
-                
-                            <span class="card-notes" hidden>
-                                Striped grazing animal that lives in herds; each individual has a distinctive stripe pattern.
-                            </span>
-                
-                            <strong>View Memory →</strong>
-                        </span>
-                    </button>
-                </article>
-
-                <article class="card" id="memory-5">
-                    <button
-                        type="button"
-                        class="memory-button"
-                        aria-label="Open Nile Crocodile sighting at Kruger National Park, South Africa"
-                    >
-                        <span class="art">
-                            <img
-                                src="./images/crocodile-945308_1280.jpg.webp"
-                                alt="Nile Crocodile"
-                                loading="lazy"
-                            >
-                        </span>
-                
-                        <span class="body">
-                            <span class="tag">	Kruger National Park, South Africa</span>
-                            <span class="card-title">Nile Crocodile</span>
-                            <small>2026-10-04</small>
-                
-                            <span class="card-notes" hidden>
-                                Aquatic ambush predator often seen resting on riverbanks or waiting near the water.
-                            </span>
-                
-                            <strong>View Memory →</strong>
-                        </span>
-                    </button>
-                </article>
-
-                <article class="card" id="memory-6">
-                    <button
-                        type="button"
-                        class="memory-button"
-                        aria-label="Open Gazelle sighting at Serengeti National Park, Tanzania"
-                    >
-                        <span class="art">
-                            <img
-                                src="./images/gazelle_safari_antelope__-1060x706.jpg.webp"
-                                alt="Gazelle"
-                                loading="lazy"
-                            >
-                        </span>
-                
-                        <span class="body">
-                            <span class="tag">	Serengeti National Park, Tanzania</span>
-                            <span class="card-title">Gazelle</span>
-                            <small>2026-09-25</small>
-                
-                            <span class="card-notes" hidden>
-                                Swift, slender antelope that grazes in open country and escapes predators through agility.
-                            </span>
-                
-                            <strong>View Memory →</strong>
-                        </span>
-                    </button>
-                </article>
+                <!-- Filled by profile.js from /api/sightings -->
             </div>
             <div id="empty-state" class="panel" hidden>
                 <h2>No matching memories</h2>
@@ -297,31 +97,7 @@
 
             <div class="location-filter">
                 <label for="map-place">Choose a Location</label>
-                <select id="map-place">
-                    <option
-                        value="Masai Mara National Reserve, Kenya"
-                        data-latitude="-1.49"
-                        data-longitude="35.14"
-                    >
-                        Masai Mara National Reserve, Kenya
-                    </option>
-                
-                    <option
-                        value="Kruger National Park, South Africa"
-                        data-latitude="-24.00"
-                        data-longitude="31.50"
-                    >
-                        Kruger National Park, South Africa
-                    </option>
-                
-                    <option
-                        value="Serengeti National Park, Tanzania"
-                        data-latitude="-2.33"
-                        data-longitude="34.83"
-                    >
-                        Serengeti National Park, Tanzania
-                    </option>
-                </select>
+                <select id="map-place"></select>
             </div>
 
             <div class="map-wrap">
@@ -336,35 +112,7 @@
 
             <p class="map-summary" id="map-summary"></p>
             <div class="map-points" id="map-points">
-                <div class="map-point" data-location="Masai Mara National Reserve, Kenya">
-                    <strong>Giraffe</strong>
-                    <span>2026-11-09 · Masai Mara National Reserve, Kenya</span>
-                </div>
-            
-                <div class="map-point" data-location="Masai Mara National Reserve, Kenya">
-                    <strong>Cheetah</strong>
-                    <span>2026-11-06 · Masai Mara National Reserve, Kenya</span>
-                </div>
-            
-                <div class="map-point" data-location="Kruger National Park, South Africa">
-                    <strong>Rhinoceros</strong>
-                    <span>2026-10-18 · Kruger National Park, South Africa</span>
-                </div>
-            
-                <div class="map-point" data-location="Serengeti National Park, Tanzania">
-                    <strong>Zebra</strong>
-                    <span>2026-10-12 · Serengeti National Park, Tanzania</span>
-                </div>
-            
-                <div class="map-point" data-location="Kruger National Park, South Africa">
-                    <strong>Nile Crocodile</strong>
-                    <span>2026-10-04 · Kruger National Park, South Africa</span>
-                </div>
-            
-                <div class="map-point" data-location="Serengeti National Park, Tanzania">
-                    <strong>Gazelle</strong>
-                    <span>2026-09-25 · Serengeti National Park, Tanzania</span>
-                </div>
+                <!-- Filled by profile.js from /api/sightings -->
             </div>
         </section>
     </main>
@@ -376,10 +124,29 @@
             <p id="detail-meta"></p>
             <p id="detail-notes"></p>
             <button type="button" id="show-on-map">Show location on map</button>
+            <button type="button" id="delete-sighting">Delete sighting</button>
         </div>
         <div class="actions">
             <button type="button" id="close-detail">Close sighting</button>
         </div>
+    </dialog>
+    <!-- PROTOTYPE add-sighting form; restyle as needed -->
+    <dialog id="add-dialog" aria-labelledby="add-title">
+        <form id="add-form" method="dialog">
+            <h2 id="add-title">Add a sighting</h2>
+            <label>Species <input name="species" required maxlength="100"></label>
+            <label>Location name <input name="locationName" maxlength="200" placeholder="Serengeti National Park, Tanzania"></label>
+            <label>Latitude <input name="lat" type="number" step="any" min="-90" max="90" required></label>
+            <label>Longitude <input name="lng" type="number" step="any" min="-180" max="180" required></label>
+            <button type="button" id="use-location">Use my current location</button>
+            <label>Notes <input name="notes" maxlength="1000"></label>
+            <label>Photo <input name="photo" type="file" accept="image/*"></label>
+            <p id="add-status" role="status"></p>
+            <div class="actions">
+                <button type="submit" class="primary">Save sighting</button>
+                <button type="button" id="cancel-add">Cancel</button>
+            </div>
+        </form>
     </dialog>
 </body>
 </html>

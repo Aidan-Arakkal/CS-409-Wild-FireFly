@@ -16,3 +16,12 @@ services:
         value: https://aidan-arakkal.github.io
       - key: MONGODB_URI
         sync: false
+      # Sightings database and photo storage (values set in the Render dashboard)
+      - key: MONGODB_URI_S
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

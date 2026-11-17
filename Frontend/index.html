@@ -3,33 +3,65 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Wild FireFly Accounts</title>
+    <title>Sign in – WildFireFly</title>
     <meta name="auth-api-origin" content="">
+    <!-- Shares the journal page's styles so both pages match -->
+    <link rel="stylesheet" href="./profile.css">
+    <link rel="stylesheet" href="./auth.css">
     <script src="./auth.js" defer></script>
 </head>
 <body>
-    <main>
-        <h1>Wild FireFly Accounts</h1>
-        <p id="status" role="status"></p>
+    <header>
+        <div class="header-left">
+            <strong>WildFireFly</strong>
+        </div>
+    </header>
 
-        <div id="guest">
-            <form id="register">
-                <h2>Create an account</h2>
-                <p><label>Name <input name="name" autocomplete="name" required maxlength="100"></label></p>
-                <p><label>Email <input name="email" type="email" autocomplete="email" required maxlength="254"></label></p>
-                <p><label>Password (8–128 characters) <input name="password" type="password" autocomplete="new-password" required minlength="8" maxlength="128"></label></p>
-                <button>Create account</button>
+    <main class="auth-page">
+        <section class="auth-hero">
+            <div class="auth-hero-text">
+                <h1>Your wildlife journal</h1>
+                <p class="muted">Save your sightings, revisit your memories, and see where you found them.</p>
+            </div>
+            <img src="./images/africa-safari-giraffes.jpg.webp" alt="" class="auth-hero-image">
+        </section>
+
+        <p id="status" class="auth-status" role="status"></p>
+
+        <div id="guest" class="auth-forms">
+            <form id="login" class="panel auth-form">
+                <h2>Sign in</h2>
+                <label>Email
+                    <input name="email" type="email" autocomplete="username" required maxlength="254">
+                </label>
+                <label>Password
+                    <input name="password" type="password" autocomplete="current-password" required maxlength="128">
+                </label>
+                <button class="primary">Sign in</button>
             </form>
 
-            <form id="login">
-                <h2>Sign in</h2>
-                <p><label>Email <input name="email" type="email" autocomplete="username" required maxlength="254"></label></p>
-                <p><label>Password <input name="password" type="password" autocomplete="current-password" required maxlength="128"></label></p>
-                <button>Sign in</button>
+            <form id="register" class="panel auth-form">
+                <h2>Create an account</h2>
+                <label>Name
+                    <input name="name" autocomplete="name" required maxlength="100">
+                </label>
+                <label>Email
+                    <input name="email" type="email" autocomplete="email" required maxlength="254">
+                </label>
+                <label>Password <small class="muted">8–128 characters</small>
+                    <input name="password" type="password" autocomplete="new-password" required minlength="8" maxlength="128">
+                </label>
+                <button>Create account</button>
             </form>
         </div>
 
-        <button id="logout" hidden>Sign out</button>
+        <div id="signed-in" class="panel auth-signed-in" hidden>
+            <h2>Welcome back</h2>
+            <div class="actions">
+                <a href="./profile.html" class="button-link primary">Go to my journal</a>
+                <button id="logout" type="button">Sign out</button>
+            </div>
+        </div>
     </main>
 </body>
 </html>
