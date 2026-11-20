@@ -3,42 +3,61 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="auth-api-origin" content="">
 
     <title>My Journal</title>
 
     <link rel="stylesheet" href="./profile.css">
-    <meta name="auth-api-origin" content="">
+
     <script src="./api.js" defer></script>
     <script src="./profile.js" defer></script>
 </head>
 
 <body>
+    <!-- Header and navigation -->
     <header>
         <div class="header-left">
             <strong>WildFireFly</strong>
-            <a href="./index.html" class="account-button">Account</a>
+
+            <a href="./index.html" class="account-button">
+                Account
+            </a>
         </div>
 
         <nav aria-label="Main navigation">
-            <button type="button" id="journal-button" aria-current="page">
+            <button
+                type="button"
+                id="journal-button"
+                aria-current="page"
+            >
                 My Journal
             </button>
-            <button type="button">Explore Species</button>
-            <button type="button" class="open-add">Add Sighting</button>
+
+            <button type="button">
+                Explore Species
+            </button>
+
+            <button type="button" class="open-add">
+                Add Sighting
+            </button>
         </nav>
     </header>
 
     <main id="journal">
-        <!-- Heading -->
+        <!-- Page heading -->
         <div class="top">
             <h1 id="journal-title" tabindex="-1">My Memories</h1>
-            <button type="button" class="primary open-add">+ Add Sighting</button>
+
+            <button type="button" class="primary open-add">
+                + Add Sighting
+            </button>
         </div>
 
-        <!-- Search Bar and Dropdown Menu -->
+        <!-- Search and filtering -->
         <div class="toolbar">
             <label for="search">
                 Search your memories
+
                 <input
                     id="search"
                     type="search"
@@ -48,6 +67,7 @@
 
             <label for="group">
                 View Sightings
+
                 <select id="group">
                     <option value="all">All Sightings</option>
                     <option value="newest">Newest</option>
@@ -57,7 +77,7 @@
             </label>
         </div>
 
-        <!-- Summary of the Journal -->
+        <!-- Totals Section -->
         <dl class="stats" aria-label="Journal totals">
             <div>
                 <dt>Total Sightings</dt>
@@ -68,6 +88,7 @@
                 <dt title="Unique identified species; unknown sightings are excluded">
                     Species Recorded
                 </dt>
+
                 <dd id="total-species">0</dd>
             </div>
 
@@ -77,74 +98,190 @@
             </div>
         </dl>
 
-        <!-- Six Mock Data -->
+        <!-- Sightings loaded by profile.js -->
         <section id="cards" aria-labelledby="results-heading">
             <h2 id="results-heading">All Sightings</h2>
+
             <p id="results-count" role="status">Loading…</p>
+
             <div id="memory-grid" class="grid">
-                <!-- Filled by profile.js from /api/sightings -->
+                <!-- Cards are added here by profile.js. -->
             </div>
+
             <div id="empty-state" class="panel" hidden>
                 <h2>No matching memories</h2>
-                <p>Try a different species or location, or clear your search.</p>
-                <button type="button" id="clear-search">Clear search</button>
+
+                <p>
+                    Try a different species or location, or clear your search.
+                </p>
+
+                <button type="button" id="clear-search">
+                    Clear search
+                </button>
             </div>
         </section>
 
-        <!-- Map -->
+        <!-- Sighting Locations -->
         <section class="panel map-panel" aria-labelledby="map-title">
             <h2 id="map-title">Sightings location</h2>
 
             <div class="location-filter">
                 <label for="map-place">Choose a Location</label>
-                <select id="map-place"></select>
+
+                <select id="map-place">
+                    <!-- Locations are added here by profile.js. -->
+                </select>
             </div>
 
             <div class="map-wrap">
                 <iframe
                     id="sighting-map"
-                    allowfullscreen
                     title="Selected sighting location"
                     loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
+                    allowfullscreen
                 ></iframe>
             </div>
 
-            <p class="map-summary" id="map-summary"></p>
-            <div class="map-points" id="map-points">
-                <!-- Filled by profile.js from /api/sightings -->
+            <p id="map-summary" class="map-summary"></p>
+
+            <div id="map-points" class="map-points">
+                <!-- Location details are added here by profile.js. -->
             </div>
         </section>
     </main>
 
+    <!-- Popup of My Memory Card -->
     <dialog id="detail" aria-labelledby="detailtitle">
+        <button
+            type="button"
+            id="close-detail"
+            class="dialog-close"
+            aria-label="Close sighting details"
+        >
+            &times;
+        </button>
+
         <div id="detailbody">
-            <div id="detail-art" class="art"><img id="detail-image" alt=""></div>
+            <div id="detail-art" class="art">
+                <img id="detail-image" alt="">
+            </div>
+
             <h2 id="detailtitle"></h2>
+
             <p id="detail-meta"></p>
+
             <p id="detail-notes"></p>
-            <button type="button" id="show-on-map">Show location on map</button>
-            <button type="button" id="delete-sighting">Delete sighting</button>
-        </div>
-        <div class="actions">
-            <button type="button" id="close-detail">Close sighting</button>
+
+            <div class="actions detail-actions">
+                <button type="button" id="show-on-map">
+                    Show location on map
+                </button>
+
+                <button
+                    type="button"
+                    id="delete-sighting"
+                    class="danger"
+                >
+                    Delete sighting
+                </button>
+            </div>
         </div>
     </dialog>
-    <!-- PROTOTYPE add-sighting form; restyle as needed -->
+
+    <!-- Add Sighting Popup -->
     <dialog id="add-dialog" aria-labelledby="add-title">
         <form id="add-form" method="dialog">
             <h2 id="add-title">Add a sighting</h2>
-            <label>Species <input name="species" required maxlength="100"></label>
-            <label>Location name <input name="locationName" maxlength="200" placeholder="Serengeti National Park, Tanzania"></label>
-            <label>Latitude <input name="lat" type="number" step="any" min="-90" max="90" required></label>
-            <label>Longitude <input name="lng" type="number" step="any" min="-180" max="180" required></label>
-            <button type="button" id="use-location">Use my current location</button>
-            <label>Notes <input name="notes" maxlength="1000"></label>
-            <label>Photo <input name="photo" type="file" accept="image/*"></label>
+
+            <label for="sighting-species">
+                Species
+
+                <input
+                    id="sighting-species"
+                    name="species"
+                    type="text"
+                    maxlength="100"
+                    required
+                >
+            </label>
+
+            <label for="sighting-location">
+                Location name
+
+                <input
+                    id="sighting-location"
+                    name="locationName"
+                    type="text"
+                    maxlength="200"
+                    placeholder="Serengeti National Park, Tanzania"
+                >
+            </label>
+
+            <label for="sighting-latitude">
+                Latitude
+
+                <input
+                    id="sighting-latitude"
+                    name="lat"
+                    type="number"
+                    step="any"
+                    min="-90"
+                    max="90"
+                    required
+                >
+            </label>
+
+            <label for="sighting-longitude">
+                Longitude
+
+                <input
+                    id="sighting-longitude"
+                    name="lng"
+                    type="number"
+                    step="any"
+                    min="-180"
+                    max="180"
+                    required
+                >
+            </label>
+
+            <button type="button" id="use-location">
+                Use my current location
+            </button>
+
+            <label for="sighting-notes">
+                Notes
+
+                <input
+                    id="sighting-notes"
+                    name="notes"
+                    type="text"
+                    maxlength="1000"
+                >
+            </label>
+
+            <label for="sighting-photo">
+                Photo
+
+                <input
+                    id="sighting-photo"
+                    name="photo"
+                    type="file"
+                    accept="image/*"
+                >
+            </label>
+
             <p id="add-status" role="status"></p>
+
             <div class="actions">
-                <button type="submit" class="primary">Save sighting</button>
-                <button type="button" id="cancel-add">Cancel</button>
+                <button type="submit" class="primary">
+                    Save sighting
+                </button>
+
+                <button type="button" id="cancel-add">
+                    Cancel
+                </button>
             </div>
         </form>
     </dialog>
