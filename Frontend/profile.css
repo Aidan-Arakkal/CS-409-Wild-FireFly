@@ -5,7 +5,7 @@
 body {
     margin: 0;
     font-family: "Times New Roman", Times, serif;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.5;
     color: #223c30;
     background: white;
@@ -25,13 +25,13 @@ textarea,
 
 h1 {
     margin: 0;
-    font-size: 44px;
+    font-size: 40px;
     line-height: 1.15;
 }
 
 h2,
 h3 {
-    font-size: 28px;
+    font-size: 26px;
     line-height: 1.25;
 }
 
@@ -157,7 +157,7 @@ header {
 }
 
 header strong {
-    font-size: 28px;
+    font-size: 26px;
 }
 
 .header-left {
@@ -213,6 +213,14 @@ main {
     background: white;
 }
 
+/* Messages displayed inside the journal page. */
+
+#journal-message {
+    padding: 14px 18px;
+    border: 1px solid #a7b6a7;
+    border-radius: 12px;
+    background: #edf3df;
+}
 
 /* Search and Filter Section */
 
@@ -224,7 +232,8 @@ main {
     margin: 24px 0;
 }
 
-.toolbar label {
+.toolbar label,
+.toolbar .filter-field {
     position: relative;
     display: flex;
     flex: 1;
@@ -238,31 +247,77 @@ main {
     flex: 1.6;
 }
 
-.toolbar input,
-.toolbar select {
+.toolbar input {
     height: 56px;
     margin-top: 0;
     font-weight: 400;
 }
 
-.toolbar select,
-.location-filter select {
-    appearance: none;
-    -webkit-appearance: none;
-    padding-right: 44px;
+/* Website-styled dropdown controls. */
+
+.dropdown {
+    position: relative;
+    font-weight: 400;
 }
 
-.toolbar label:last-child::after,
-.location-filter::after {
-    content: "▾";
-    position: absolute;
-    right: 16px;
-    bottom: 12px;
-    font-size: 22px;
+.dropdown > summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    min-height: 56px;
+    padding: 14px 16px;
+    border: 1.5px solid #a7b6a7;
+    border-radius: 12px;
     color: #193d30;
-    pointer-events: none;
+    background: white;
+    cursor: pointer;
+    list-style: none;
 }
 
+.dropdown > summary::-webkit-details-marker {
+    display: none;
+}
+
+.dropdown > summary:hover {
+    border-color: #526f59;
+}
+
+.dropdown > summary:focus-visible {
+    outline: 3px solid #b97718;
+    outline-offset: 3px;
+}
+
+.dropdown-options {
+    display: block;
+    max-height: 280px;
+    overflow-y: auto;
+    margin-top: 8px;
+    padding: 8px;
+    border: 1px solid #a7b6a7;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 6px 18px rgba(25, 61, 48, 0.15);
+}
+
+.dropdown:not([open]) > .dropdown-options {
+    display: none;
+}
+
+.dropdown-options button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    white-space: normal;
+}
+
+.dropdown-options button + button {
+    margin-top: 4px;
+}
+
+.dropdown-options button[aria-pressed="true"] {
+    background: #d6ee95;
+}
 
 /* Totals Section */
 
@@ -285,13 +340,13 @@ main {
 }
 
 .stats dt {
-    font-size: 20px;
+    font-size: 18px;
     color: #5b6e61;
 }
 
 .stats dd {
     margin: 6px 0 0;
-    font-size: 36px;
+    font-size: 32px;
     font-weight: 700;
     line-height: 1.2;
 }
@@ -312,12 +367,22 @@ main {
 }
 
 .card button {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
     width: 100%;
     height: 100%;
     padding: 0;
     border: 0;
     border-radius: 0;
     text-align: left;
+}
+
+.card .art {
+    width: 100%;
+    flex-shrink: 0;
+    overflow: hidden;
 }
 
 .card button:hover {
@@ -352,14 +417,14 @@ main {
 .tag {
     display: inline-block;
     padding: 4px 10px;
-    font-size: 20px;
+    font-size: 17px;
     background: #edf1e6;
 }
 
 .card-title {
     display: block;
     margin: 10px 0 8px;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 600;
     line-height: 1.25;
 }
@@ -399,15 +464,10 @@ main {
     margin-bottom: 20px;
 }
 
-.location-filter label {
+#location-label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-}
-
-.location-filter select {
-    height: 56px;
-    margin: 0;
 }
 
 .map-wrap {
@@ -529,7 +589,7 @@ dialog::backdrop {
     }
 
     h1 {
-        font-size: 36px;
+        font-size: 32px;
     }
 
     .header-left {
@@ -551,7 +611,8 @@ dialog::backdrop {
         align-items: flex-start;
     }
 
-    .toolbar label {
+    .toolbar label,
+    .toolbar .filter-field {
         flex-basis: 100%;
         min-width: 0;
     }

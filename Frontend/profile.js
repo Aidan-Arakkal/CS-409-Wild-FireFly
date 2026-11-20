@@ -121,6 +121,8 @@ function renderMapControls() {
         el('div', { className: 'map-point', dataset: { location: locationName(s) } },
             el('strong', {}, s.species),
             el('span', {}, `${dateString(s)} · ${locationName(s)}`))));
+    
+    locationDropdown.refresh();
 }
 
 function render() {
@@ -175,6 +177,8 @@ function getCardValue(card, field) {
 }
 
 function updateSightings() {
+    viewDropdown.sync();
+
     const query = searchInput.value.trim().toLowerCase();
     const view = groupSelect.value;
     const matches = [];
@@ -286,6 +290,8 @@ function closeMemory() {
 }
 
 function updateMap() {
+    locationDropdown.sync();
+
     const option = mapSelect.options[mapSelect.selectedIndex];
     // Changed: handle "no sightings with coordinates yet".
     if (!option) {
@@ -350,9 +356,18 @@ const addDialog = document.getElementById('add-dialog');
 const addForm = document.getElementById('add-form');
 const addStatus = document.getElementById('add-status');
 
+function showJournalMessage(message) {
+    const messageElement = document.getElementById('journal-message');
+
+    messageElement.textContent = message;
+    messageElement.hidden = false;
+}
+
 function openAdd() {
     if (usingMock) {
-        alert('The server is unavailable, so new sightings cannot be saved right now.');
+        showJournalMessage(
+            'The server is unavailable, so new sightings cannot be saved right now.'
+        );
         return;
     }
     addForm.reset();
@@ -397,15 +412,74 @@ document.getElementById('use-location').addEventListener('click', () => {
     );
 });
 
-document.getElementById('delete-sighting').addEventListener('click', async () => {
-    if (!selectedCard || !confirm('Delete this sighting?')) return;
+const deleteDialog = document.getElementById('delete-dialog');
+const deleteStatus = document.getElementById('delete-status');
+const confirmDelete = document.getElementById('confirm-delete');
+const cancelDelete = document.getElementById('cancel-delete');
+
+let pendingDeleteId = null;
+
+document.getElementById('delete-sighting').addEventListener('click', function () {
+    if (!selectedCard || usingMock) {
+        return;
+    }
+
+    pendingDeleteId = selectedCard.dataset.id;
+    deleteStatus.textContent = '';
+
+    closeMemory();
+    deleteDialog.showModal();
+});
+
+function cancelDeletion() {
+    pendingDeleteId = null;
+    deleteDialog.close();
+
+    if (selectedCard) {
+        openMemory(selectedCard);
+    }
+}
+
+cancelDelete.addEventListener('click', cancelDeletion);
+
+confirmDelete.addEventListener('click', async function () {
+    if (pendingDeleteId === null) {
+        return;
+    }
+
+    const sightingId = pendingDeleteId;
+
+    confirmDelete.disabled = true;
+    cancelDelete.disabled = true;
+    deleteStatus.textContent = 'Deleting…';
+
     try {
-        await SightingsAPI.remove(selectedCard.dataset.id);
-        sightings = sightings.filter((s) => s._id !== selectedCard.dataset.id);
-        closeMemory();
+        await SightingsAPI.remove(sightingId);
+
+        sightings = sightings.filter(function (sighting) {
+            return sighting._id !== sightingId;
+        });
+
+        selectedCard = null;
+        pendingDeleteId = null;
+
+        deleteDialog.close();
         render();
+
+        showJournalMessage('Sighting deleted.');
     } catch (error) {
-        alert(error.message);
+        deleteStatus.textContent = error.message;
+    } finally {
+        confirmDelete.disabled = false;
+        cancelDelete.disabled = false;
+    }
+});
+
+deleteDialog.addEventListener('cancel', function (event) {
+    event.preventDefault();
+
+    if (!confirmDelete.disabled) {
+        cancelDeletion();
     }
 });
 
@@ -421,5 +495,98 @@ document.getElementById('clear-search').addEventListener('click', clearSearch);
 document.getElementById('close-detail').addEventListener('click', closeMemory);
 document.getElementById('show-on-map').addEventListener('click', showMemoryOnMap);
 document.getElementById('journal-button').addEventListener('click', openJournal);
+
+function setupDropdown(selectId, dropdownId, optionsId, valueId) {
+    const select = document.getElementById(selectId);
+    const dropdown = document.getElementById(dropdownId);
+    const optionsContainer = document.getElementById(optionsId);
+    const valueElement = document.getElementById(valueId);
+    const summary = dropdown.querySelector('summary');
+
+    function sync() {
+        const selectedOption = select.options[select.selectedIndex];
+
+        if (!selectedOption) {
+            valueElement.textContent = 'No locations yet';
+            dropdown.open = false;
+            return;
+        }
+
+        valueElement.textContent = selectedOption.textContent;
+
+        const buttons = optionsContainer.querySelectorAll('button');
+
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].setAttribute(
+                'aria-pressed',
+                String(buttons[i].dataset.value === select.value)
+            );
+        }
+    }
+
+    function refresh() {
+        optionsContainer.textContent = '';
+
+        for (let i = 0; i < select.options.length; i++) {
+            const option = select.options[i];
+            const button = document.createElement('button');
+
+            button.type = 'button';
+            button.textContent = option.textContent;
+            button.dataset.value = option.value;
+
+            button.addEventListener('click', function () {
+                select.value = option.value;
+                dropdown.open = false;
+
+                select.dispatchEvent(
+                    new Event('change', { bubbles: true })
+                );
+
+                sync();
+                summary.focus();
+            });
+
+            optionsContainer.appendChild(button);
+        }
+
+        sync();
+    }
+
+    dropdown.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            dropdown.open = false;
+            summary.focus();
+        }
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!dropdown.contains(event.target)) {
+            dropdown.open = false;
+        }
+    });
+
+    refresh();
+
+    return {
+        sync: sync,
+        refresh: refresh
+    };
+}
+
+const viewDropdown = setupDropdown(
+    'group',
+    'view-dropdown',
+    'view-options',
+    'view-value'
+);
+
+const locationDropdown = setupDropdown(
+    'map-place',
+    'location-dropdown',
+    'location-options',
+    'location-value'
+);
 
 loadSightings();

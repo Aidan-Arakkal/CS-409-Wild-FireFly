@@ -53,6 +53,8 @@
             </button>
         </div>
 
+        <p id="journal-message" role="status" hidden></p>
+
         <!-- Search and filtering -->
         <div class="toolbar">
             <label for="search">
@@ -65,16 +67,25 @@
                 >
             </label>
 
-            <label for="group">
-                View Sightings
-
-                <select id="group">
+            <div class="filter-field">
+                <span id="view-label">View Sightings</span>
+            
+                <select id="group" hidden>
                     <option value="all">All Sightings</option>
                     <option value="newest">Newest</option>
                     <option value="location">Location</option>
                     <option value="species">Species</option>
                 </select>
-            </label>
+            
+                <details id="view-dropdown" class="dropdown">
+                    <summary aria-labelledby="view-label view-value">
+                        <span id="view-value">All Sightings</span>
+                        <span aria-hidden="true">▾</span>
+                    </summary>
+            
+                    <div id="view-options" class="dropdown-options"></div>
+                </details>
+            </div>
         </div>
 
         <!-- Totals Section -->
@@ -126,11 +137,18 @@
             <h2 id="map-title">Sightings location</h2>
 
             <div class="location-filter">
-                <label for="map-place">Choose a Location</label>
-
-                <select id="map-place">
-                    <!-- Locations are added here by profile.js. -->
-                </select>
+                <span id="location-label">Choose a Location</span>
+            
+                <select id="map-place" hidden></select>
+            
+                <details id="location-dropdown" class="dropdown">
+                    <summary aria-labelledby="location-label location-value">
+                        <span id="location-value">No locations yet</span>
+                        <span aria-hidden="true">▾</span>
+                    </summary>
+            
+                    <div id="location-options" class="dropdown-options"></div>
+                </details>
             </div>
 
             <div class="map-wrap">
@@ -284,6 +302,25 @@
                 </button>
             </div>
         </form>
+    </dialog>
+
+    <!-- Delete confirmation popup -->
+    <dialog id="delete-dialog" aria-labelledby="delete-title">
+        <h2 id="delete-title">Delete this sighting?</h2>
+
+        <p>This will remove the sighting and its saved photograph.</p>
+
+        <p id="delete-status" role="status"></p>
+
+        <div class="actions detail-actions">
+            <button type="button" id="cancel-delete" autofocus>
+                Keep sighting
+            </button>
+
+            <button type="button" id="confirm-delete" class="danger">
+                Delete sighting
+            </button>
+        </div>
     </dialog>
 </body>
 </html>
